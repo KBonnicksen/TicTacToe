@@ -18,13 +18,16 @@ public class MainActivity extends AppCompatActivity
     private Button button7;
     private Button button8;
     private Button button9;
-    String currPlayer;
+
+    Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         assignButtonValues();
+
+        game = new Game();
     }
     public void onClick(View v){
 
@@ -40,5 +43,37 @@ public class MainActivity extends AppCompatActivity
         button7 = findViewById(R.id.button7);
         button8 = findViewById(R.id.button8);
         button9 = findViewById(R.id.button9);
+    }
+}
+
+class Game{
+    public Player x;
+    public Player o;
+
+    public Game(){
+        x = new Player("Player X");
+        x.isTurn = true;
+        o = new Player("Player O");
+        o.isTurn = false;
+    }
+
+    public void changeTurn(){
+        if(x.isTurn){
+            x.isTurn = false;
+            o.isTurn = true;
+        }
+        else{
+            x.isTurn = true;
+            o.isTurn = false;
+        }
+    }
+}
+
+class Player{
+    public String name;
+    public boolean isTurn;
+
+    public Player(String name){
+        this.name = name;
     }
 }
