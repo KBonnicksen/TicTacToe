@@ -101,7 +101,7 @@
         android:layout_width="297dp"
         android:layout_height="63dp"
         android:gravity="center"
-        android:text="Player X's turn"
+        android:text=""
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
