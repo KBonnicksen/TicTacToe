@@ -6,6 +6,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements View.OnClickListener{
@@ -22,9 +26,10 @@ public class MainActivity extends AppCompatActivity
 
     public Player x;
     public Player o;
+    Player currPlayer;
 
     public TextView message;
-
+    int[] winningCombos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +40,48 @@ public class MainActivity extends AppCompatActivity
         message = findViewById(R.id.message);
         assignButtonValues();
 
+        winningCombos = new int[]{123, 456, 789, 147, 258, 369, 159, 357};
+
         //Create players and assign first turn
-        x = new Player("Player X");
-        x.isTurn = true;
-        o = new Player("Player O");
-        o.isTurn = false;
+        x = new Player("X");
+        currPlayer = x;
+        o = new Player("O");
         displayPlayerTurn();
+    }
+
+    public void selectSquare(View v){
+        Button selSquare = findViewById(v.getId());
+        selSquare.setText(currPlayer.name);
+        String buttonValue = selSquare.getTag().toString();
+        int square = Integer.parseInt(buttonValue);
+
+        currPlayer.squaresPlayed.add(square);
+        //Toast.makeText(this, Integer.toString(currPlayer.squaresPlayed[square]), Toast.LENGTH_SHORT).show();
+
+        if(checkForWinner()){
+            Toast.makeText(this, currPlayer.name + "WINS", Toast.LENGTH_SHORT).show();
+        }
+        changeTurn();
+    }
+
+    private boolean checkForWinner() {
+        int combo;
+        int square;
+        int matchingSquares = 0;
+        //combo = winningCombos[num];
+        for(int i = 0; i < winningCombos.length; i++){
+            combo = winningCombos[i];
+            for(int m = 0; m < 3; m++){
+                square = combo % 10;
+                if (currPlayer.squaresPlayed.contains(square)){
+                    matchingSquares++;
+                }
+                combo /= 10;
+            }
+            if(matchingSquares == 3)
+                return true;
+        }
+        return false;
     }
 
     public void onClick(View v){
@@ -48,14 +89,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void changeTurn(){
-        if(x.isTurn){
-            x.isTurn = false;
-            o.isTurn = true;
+        if(currPlayer == x){
+            currPlayer = o;
         }
         else{
-            x.isTurn = true;
-            o.isTurn = false;
+            currPlayer = x;
         }
+        //displayPlayerTurn();
     }
 
     public void assignButtonValues(){
@@ -71,22 +111,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void displayPlayerTurn(){
-        Player currPlayer;
-        if(x.isTurn){
-            currPlayer = x;
-        }
-        else{
-            currPlayer = o;
-        }
-        message.setText(currPlayer.name + "'s turn");
+        setMessageText("Player " + currPlayer.name + "'s turn");
+    }
+
+    public void setMessageText(String msg){
+        message.setText(msg);
     }
 }
 
 class Player{
     public String name;
-    public boolean isTurn;
+    public List<Integer> squaresPlayed;
 
     public Player(String name){
         this.name = name;
+         squaresPlayed = new ArrayList<>();
     }
 }
