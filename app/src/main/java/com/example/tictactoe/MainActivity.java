@@ -1,35 +1,24 @@
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
-
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements View.OnClickListener{
 
-    private Button button1;
-    private Button button2;
-    private Button button3;
-    private Button button4;
-    private Button button5;
-    private Button button6;
-    private Button button7;
-    private Button button8;
-    private Button button9;
-
     public Player x;
     public Player o;
     Player currPlayer;
 
     public TextView message;
-    int[] winningCombos;
+    public Button[] tiles;
+    public int[] winningCombos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +26,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         //Assign variables
-        message = findViewById(R.id.message);
         assignButtonValues();
-
+        message = findViewById(R.id.message);
         winningCombos = new int[]{123, 456, 789, 147, 258, 369, 159, 357};
 
-        //Create players and assign first turn
+        startGame();
+    }
+
+    public void startGame(){
         x = new Player("X");
         currPlayer = x;
         o = new Player("O");
@@ -52,40 +43,73 @@ public class MainActivity extends AppCompatActivity
     public void selectSquare(View v){
         Button selSquare = findViewById(v.getId());
         selSquare.setText(currPlayer.name);
+        selSquare.setEnabled(false);
+
+        // Assign square to the player that touched it
         String buttonValue = selSquare.getTag().toString();
         int square = Integer.parseInt(buttonValue);
-
         currPlayer.squaresPlayed.add(square);
-        //Toast.makeText(this, Integer.toString(currPlayer.squaresPlayed[square]), Toast.LENGTH_SHORT).show();
 
-        if(checkForWinner()){
-            Toast.makeText(this, currPlayer.name + "WINS", Toast.LENGTH_SHORT).show();
+        // Check the state of the game
+        if(isWinner()){
+            gameOver();
         }
-        changeTurn();
+        else if(isTie())
+            tieGame();
+        else
+            changeTurn();
     }
 
-    private boolean checkForWinner() {
+    private void tieGame() {
+        setMessageText("Good job you two... No one won.");
+        for(Button b : tiles)
+            b.setTextColor(Color.RED);
+    }
+
+    public boolean isTie(){
+        for(Button b : tiles){
+            if(b.getText().length() == 0)
+                return false;
+        }
+        return true;
+    }
+
+    private void gameOver(){
+        setMessageText("Player " + currPlayer.name + " WINS!!!!!!!!!");
+
+        for(Button b : tiles)
+            b.setEnabled(false);    // Disable tiles
+    }
+
+    private boolean isWinner() {
         int combo;
-        int square;
         int matchingSquares = 0;
-        //combo = winningCombos[num];
         for(int i = 0; i < winningCombos.length; i++){
             combo = winningCombos[i];
             for(int m = 0; m < 3; m++){
-                square = combo % 10;
-                if (currPlayer.squaresPlayed.contains(square)){
+                if (currPlayer.squaresPlayed.contains(combo % 10)){
                     matchingSquares++;
                 }
                 combo /= 10;
             }
-            if(matchingSquares == 3)
+            if(matchingSquares == 3){
+                colorWinningSquares(i);
                 return true;
+            }
+            matchingSquares = 0;
         }
         return false;
     }
 
-    public void onClick(View v){
+    public void colorWinningSquares(int index){
+        Button curr;
+        int winningCombo = winningCombos[index];
 
+        for(int i = 0; i < 3; i++){
+            curr = tiles[(winningCombo % 10) - 1];
+            curr.setTextColor(Color.GREEN);
+            winningCombo /= 10;
+        }
     }
 
     public void changeTurn(){
@@ -95,19 +119,19 @@ public class MainActivity extends AppCompatActivity
         else{
             currPlayer = x;
         }
-        //displayPlayerTurn();
+        displayPlayerTurn();
     }
 
     public void assignButtonValues(){
-        button1 = findViewById(R.id.button1);
-        button2 = findViewById(R.id.button2);
-        button3 = findViewById(R.id.button3);
-        button4 = findViewById(R.id.button4);
-        button5 = findViewById(R.id.button5);
-        button6 = findViewById(R.id.button6);
-        button7 = findViewById(R.id.button7);
-        button8 = findViewById(R.id.button8);
-        button9 = findViewById(R.id.button9);
+        tiles = new Button[]{findViewById(R.id.button1)
+                            , findViewById(R.id.button2)
+                            , findViewById(R.id.button3)
+                            , findViewById(R.id.button4)
+                            , findViewById(R.id.button5)
+                            , findViewById(R.id.button6)
+                            , findViewById(R.id.button7)
+                            , findViewById(R.id.button8)
+                            , findViewById(R.id.button9)};
     }
 
     public void displayPlayerTurn(){
@@ -117,13 +141,27 @@ public class MainActivity extends AppCompatActivity
     public void setMessageText(String msg){
         message.setText(msg);
     }
+
+
+
+    public void newGame(View v){
+        for(Button b : tiles) {     // Set all tiles back to initial state
+            b.setEnabled(true);
+            b.setText("");
+            b.setTextColor(Color.BLACK);
+        }
+        startGame();
+    }
+
+    public void onClick(View v){
+    }
 }
 
 class Player{
-    public String name;
-    public List<Integer> squaresPlayed;
+    String name;
+    List<Integer> squaresPlayed;
 
-    public Player(String name){
+    Player(String name){
         this.name = name;
          squaresPlayed = new ArrayList<>();
     }
