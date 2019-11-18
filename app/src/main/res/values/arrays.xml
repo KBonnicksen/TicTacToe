@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="playerList">
+        <item>Player X</item>
+        <item>Player O</item>
+    </string-array>
+
+    <string-array name="playerListValues">
+        <item>x</item>
+        <item>o</item>
+    </string-array>
+</resources>

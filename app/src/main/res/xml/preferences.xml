@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:dialogMessage="Enter your first name"
+        android:dialogTitle="Player X's name"
+        android:inputType="text"
+        android:key="key_x_name"
+        android:summary="Player X"
+        android:title="Name"/>
+
+    <EditTextPreference
+        android:dialogMessage="Enter your first name"
+        android:dialogTitle="Player O's name"
+        android:inputType="text"
+        android:key="key_o_name"
+        android:summary="Player O"
+        android:title="Name"/>
+
+    <ListPreference
+        android:defaultValue="true"
+        android:entries="@array/playerList"
+        android:entryValues="@array/playerListValues"
+        android:key="first_player"
+        android:title="Who goes first?" />
+
+</PreferenceScreen>

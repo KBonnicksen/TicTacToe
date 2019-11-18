@@ -1,6 +1,11 @@
 package com.example.tictactoe;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +17,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
     implements View.OnClickListener{
 
+    Button btnShowSettings;
     public Player x;
     public Player o;
     Player currPlayer;
@@ -28,6 +34,16 @@ public class MainActivity extends AppCompatActivity
         //Assign variables
         assignButtonValues();
         message = findViewById(R.id.message);
+        btnShowSettings = findViewById(R.id.btnShowSettings);
+        btnShowSettings.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_main, new SettingsActivity())
+                        .commit();
+            }
+        });
         winningCombos = new int[]{123, 456, 789, 147, 258, 369, 159, 357};
 
         startGame();
